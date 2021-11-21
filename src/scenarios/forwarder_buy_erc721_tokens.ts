@@ -95,8 +95,8 @@ export async function scenarioAsync(): Promise<void> {
     // Maker signs the order
     const signedOrder = await signatureUtils.ecSignOrderAsync(providerEngine, order, maker);
     const { orderHash } = await contractWrappers.exchange.getOrderInfo(signedOrder).callAsync();
-    const affiliateFeeRecipient = NULL_ADDRESS;
-    const affiliateFee = ZERO;
+    const affiliateFeeRecipient = [NULL_ADDRESS];
+    const affiliateFee = [ZERO];
 
     // Use the Forwarder to market buy the ERC721 orders using Eth. When using the Forwarder
     // the taker does not need to set any allowances or deposit any ETH into WETH

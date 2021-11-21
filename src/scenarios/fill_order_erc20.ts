@@ -38,11 +38,14 @@ export async function scenarioAsync(): Promise<void> {
     // the amount the maker wants of taker asset
     const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.1), DECIMALS);
     // 0x v2 uses hex encoded asset data strings to encode all the information needed to identify an asset
-    const makerAssetData = await contractWrappers.devUtils.encodeERC20AssetData(zrxTokenAddress).callAsync();
-    const takerAssetData = await contractWrappers.devUtils.encodeERC20AssetData(etherTokenAddress).callAsync();
+    console.log (`encodeERC20AssetData: zrxTokenAddress: ${zrxTokenAddress} etherTokenAddress: ${etherTokenAddress} contractWrappers.devUtils: ${contractWrappers.devUtils.address}`)
+    const makerAssetData = await contractWrappers.devUtils.encodeERC20AssetData(zrxTokenAddress).callAsync({ from: maker });
+    console.log (`encodeERC20AssetData2`);
+    const takerAssetData = await contractWrappers.devUtils.encodeERC20AssetData(etherTokenAddress).callAsync({ from: maker });
     let txHash;
     let txReceipt;
 
+    console.log ("Allow the 0x ERC20 Proxy to move ZRX on behalf of makerAccount")
     // Allow the 0x ERC20 Proxy to move ZRX on behalf of makerAccount
     const erc20Token = new ERC20TokenContract(zrxTokenAddress, providerEngine);
     const makerZRXApprovalTxHash = await erc20Token
@@ -50,6 +53,7 @@ export async function scenarioAsync(): Promise<void> {
         .sendTransactionAsync({ from: maker });
     await printUtils.awaitTransactionMinedSpinnerAsync('Maker ZRX Approval', makerZRXApprovalTxHash);
 
+    console.log ("Allow the 0x ERC20 Proxy to move WETH on behalf of takerAccount")
     // Allow the 0x ERC20 Proxy to move WETH on behalf of takerAccount
     const etherToken = contractWrappers.weth9;
     const takerWETHApprovalTxHash = await etherToken
@@ -112,6 +116,7 @@ export async function scenarioAsync(): Promise<void> {
         // Order is fillable
     }
 
+    console.log ("Fill the Order via 0x Exchange contract")
     // Fill the Order via 0x Exchange contract
     txHash = await contractWrappers.exchange
         .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)

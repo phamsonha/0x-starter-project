@@ -37,7 +37,7 @@ export async function scenarioAsync(): Promise<void> {
     // the amount the maker is selling of maker asset (1 ERC721 Token)
     const makerAssetAmount = new BigNumber(1);
     // the amount the maker wants of taker asset
-    const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.1), DECIMALS);
+    const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.01), DECIMALS);
     // Generate a random token id
     const tokenId = generatePseudoRandomSalt();
     // 0x v2 uses hex encoded asset data strings to encode all the information needed to identify an asset

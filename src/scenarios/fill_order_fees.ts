@@ -37,7 +37,7 @@ export async function scenarioAsync(): Promise<void> {
     // the amount the maker is selling in maker asset
     const makerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(5), DECIMALS);
     // the amount the maker wants of taker asset
-    const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.1), DECIMALS);
+    const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.01), DECIMALS);
     // the amount of fees the maker pays in ZRX
     const makerFee = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.01), DECIMALS);
     // the amount of fees the taker pays in ZRX
