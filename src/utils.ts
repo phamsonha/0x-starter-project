@@ -1,4 +1,4 @@
-import { runMigrationsOnceAsync } from '@0x/migrations';
+import { runMigrationsOnceAsync, ContractAddresses } from '@0x/migrations';
 import { SignedOrder } from '@0x/order-utils';
 import { BigNumber } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
@@ -20,11 +20,15 @@ export const getRandomFutureDateInSeconds = (): BigNumber => {
     return new BigNumber(Date.now() + TEN_MINUTES_MS).div(ONE_SECOND_MS).integerValue(BigNumber.ROUND_CEIL);
 };
 
-export const runMigrationsOnceIfRequiredAsync = async (): Promise<void> => {
+export const runMigrationsOnceIfRequiredAsync = async (): Promise<ContractAddresses | undefined> => {
     if (NETWORK_CONFIGS === GANACHE_CONFIGS) {
         const web3Wrapper = new Web3Wrapper(providerEngine);
+
         const [owner] = await web3Wrapper.getAvailableAddressesAsync();
-        await runMigrationsOnceAsync(providerEngine, { from: owner });
+        const currentNonce = await web3Wrapper.getAccountNonceAsync(owner);
+        console.log (`currentNonce: ${currentNonce}`)
+
+        return await runMigrationsOnceAsync(providerEngine, { from: owner });
     }
 };
 

@@ -5,7 +5,7 @@ import {
     ExchangeFillEventArgs,
     IndexedFilterValues,
 } from '@0x/contract-wrappers';
-import { assetDataUtils } from '@0x/order-utils';
+import { assetDataUtils, ERC20AssetData } from '@0x/order-utils';
 
 import { NETWORK_CONFIGS } from '../configs';
 import { PrintUtils } from '../print_utils';
@@ -35,8 +35,8 @@ export async function scenarioAsync(): Promise<void> {
                 providerEngine.stop();
             } else if (decodedLogEvent) {
                 const fillLog = decodedLogEvent.log;
-                const makerAssetData = assetDataUtils.decodeERC20AssetData(fillLog.args.makerAssetData);
-                const takerAssetData = assetDataUtils.decodeERC20AssetData(fillLog.args.takerAssetData);
+                const makerAssetData = assetDataUtils.decodeAssetDataOrThrow(fillLog.args.makerAssetData);
+                const takerAssetData = assetDataUtils.decodeAssetDataOrThrow(fillLog.args.takerAssetData);
                 PrintUtils.printData('Fill Event', [
                     ['orderHash', fillLog.args.orderHash],
                     ['makerAddress', fillLog.args.makerAddress],
@@ -45,8 +45,8 @@ export async function scenarioAsync(): Promise<void> {
                     ['takerAssetFilledAmount', fillLog.args.takerAssetFilledAmount.toString()],
                     ['makerFeePaid', fillLog.args.makerFeePaid.toString()],
                     ['takerFeePaid', fillLog.args.takerFeePaid.toString()],
-                    ['makerTokenAddress', makerAssetData.tokenAddress],
-                    ['takerTokenAddress', takerAssetData.tokenAddress],
+                    ['makerTokenAddress', (makerAssetData as ERC20AssetData).tokenAddress],
+                    ['takerTokenAddress', (takerAssetData as ERC20AssetData).tokenAddress],
                 ]);
             }
         },

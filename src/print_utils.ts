@@ -109,6 +109,7 @@ export class PrintUtils {
             }
             table.push(col);
         }
+        // console.log (table)
         console.log(table.toString());
     }
     constructor(
@@ -256,6 +257,7 @@ export class PrintUtils {
         );
         const tokenSymbol = 'ERC721';
         const balances = [tokenSymbol];
+        console.log (`erc721TokenAddress: ${erc721TokenAddress} tokenId: ${tokenId}`)
         const token = new ERC721TokenContract(erc721TokenAddress, this._contractWrappers.getProvider());
         const owner = await token.ownerOf(tokenId).callAsync();
         for (const account in this._accounts) {

@@ -8,7 +8,7 @@ import {
     OrderStatus,
 } from '@0x/contract-wrappers';
 import { SignedOrder } from '@0x/order-utils';
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from 'bignumber.js';
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 
@@ -65,9 +65,9 @@ app.use(bodyParser.json());
  */
 app.get('/v3/orderbook', (req, res) => {
     console.log('HTTP: GET orderbook');
-    const baseAssetData = req.query.baseAssetData;
-    const quoteAssetData = req.query.quoteAssetData;
-    const chainIdRaw = req.query.chainId;
+    const baseAssetData = req.query.baseAssetData != undefined ? req.query.baseAssetData.toString() : "";
+    const quoteAssetData = req.query.quoteAssetData != undefined ? req.query.quoteAssetData.toString() : "";
+    const chainIdRaw = req.query.chainId != undefined? req.query.chainId.toString() : "";
     // tslint:disable-next-line:custom-no-magic-numbers
     const chainId = parseInt(chainIdRaw, 10);
     if (chainId !== NETWORK_CONFIGS.chainId) {
@@ -84,7 +84,7 @@ app.get('/v3/orderbook', (req, res) => {
  */
 app.post('/v3/order_config', (req, res) => {
     console.log('HTTP: POST order config');
-    const chainIdRaw = req.query.chainId;
+    const chainIdRaw = req.query.chainId != undefined ? req.query.chainId.toString() : "";
     // tslint:disable-next-line:custom-no-magic-numbers
     const chainId = parseInt(chainIdRaw, 10);
     if (chainId !== NETWORK_CONFIGS.chainId) {
@@ -106,7 +106,7 @@ app.post('/v3/order_config', (req, res) => {
  */
 app.post('/v3/order', (req, res) => {
     console.log('HTTP: POST order');
-    const chainIdRaw = req.query.chainId;
+    const chainIdRaw = req.query.chainId != undefined ? req.query.chainId.toString() : "";
     // tslint:disable-next-line:custom-no-magic-numbers
     const chainId = parseInt(chainIdRaw, 10);
     if (chainId !== NETWORK_CONFIGS.chainId) {

@@ -11,17 +11,17 @@ export const mnemonicWallet = new MnemonicWalletSubprovider({
 const determineProvider = (): Web3ProviderEngine => {
     const pe = new Web3ProviderEngine();
     pe.addProvider(mnemonicWallet);
-    if (NETWORK_CONFIGS === GANACHE_CONFIGS) {
-        pe.addProvider(
-            new GanacheSubprovider({
-                vmErrorsOnRPCResponse: false,
-                network_id: GANACHE_CONFIGS.networkId,
-                mnemonic: MNEMONIC,
-            }),
-        );
-    } else {
+    // if (NETWORK_CONFIGS === GANACHE_CONFIGS) {
+    //     pe.addProvider(
+    //         new GanacheSubprovider({
+    //             vmErrorsOnRPCResponse: false,
+    //             network_id: GANACHE_CONFIGS.networkId,
+    //             mnemonic: MNEMONIC,
+    //         }),
+    //     );
+    // } else {
         pe.addProvider(new RPCSubprovider(NETWORK_CONFIGS.rpcUrl));
-    }
+    // }
     providerUtils.startProviderEngine(pe);
     return pe;
 };
