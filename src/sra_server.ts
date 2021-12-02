@@ -1,3 +1,6 @@
+import * as bodyParser from 'body-parser';
+import * as express from 'express';
+
 import { APIOrder, OrderbookResponse } from '@0x/connect';
 import {
     ContractWrappers,
@@ -7,15 +10,14 @@ import {
     ExchangeFillEventArgs,
     OrderStatus,
 } from '@0x/contract-wrappers';
-import { SignedOrder } from '@0x/order-utils';
-import { BigNumber } from '@0x/utils';
-import * as bodyParser from 'body-parser';
-import * as express from 'express';
-
-import { NETWORK_CONFIGS } from './configs';
 import { NULL_ADDRESS, ZERO } from './constants';
+
+import { BigNumber } from '@0x/utils';
+import { NETWORK_CONFIGS } from './configs';
+import { SignedOrder } from '@0x/order-utils';
 import { providerEngine } from './provider_engine';
 
+var cors = require('cors')
 const HTTP_OK_STATUS = 200;
 const HTTP_BAD_REQUEST_STATUS = 400;
 const HTTP_PORT = 3000;
@@ -59,6 +61,7 @@ contractWrappers.exchange.subscribe(
 // HTTP Server
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 /**
  * GET Orderbook endpoint retrieves the orderbook for a given asset pair.
  * http://sra-spec.s3-website-us-east-1.amazonaws.com/#operation/getOrderbook
