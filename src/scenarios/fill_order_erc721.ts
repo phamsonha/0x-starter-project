@@ -21,51 +21,52 @@ export async function scenarioAsync(): Promise<void> {
     // Initialize the ContractWrappers, this provides helper functions around calling
     // 0x contracts as well as ERC20/ERC721 token contracts on the blockchain
     let contractConfig = {
-            contractAddresses: (contractAddress != undefined ? contractAddress :
-                {
-                    erc20Proxy: '0xa99abcbf17651aa4942118016627be6496f9aa32',
-                    erc721Proxy: '0xb2652d73739a013ca8825634838b5de5daeb0c90',
-                    erc1155Proxy: '0x5b56273af034e7f48e6df6cc2828fcce7a7ce887',
-                    zrxToken: '0xc1da575b5914833602d194d6d013c15270a2c84f',
-                    etherToken: '0xd3eca02c9fd5d1bc66f7477193bf7dea33bda48e',
-                    exchange: '0x92fea08efc9f78a2caa0ecf232e862c5765c6da8',
-                    assetProxyOwner: '0x0000000000000000000000000000000000000000',
-                    erc20BridgeProxy: '0xa1e328732f9ababdb08605e5cac94912553fcccc',
-                    zeroExGovernor: '0x0000000000000000000000000000000000000000',
-                    forwarder: '0x7a95b306c7846f5f752ad2cd1466b706bf3849c7',
-                    coordinatorRegistry: '0x43c517ddb700c7baf20f533df37cac70143f0971',
-                    coordinator: '0xddbe68beae54dd94465c6bba2477ee9500ce1974',
-                    multiAssetProxy: '0x5593d1c9bce28e2f1e2bf87fc64f8f17f48bd7a8',
-                    staticCallProxy: '0x8b8894867abaa7ced861fcaee1535603cac162fa',
-                    devUtils: '0x59b75b5531d65e684609e06411fc793d50034e16',
-                    exchangeV2: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
-                    zrxVault: '0xdb363ce7c25e368005be1765ab0a3c33c34dbc7d',
-                    staking: '0x280cf27fe4e26121f377c174469bd270c19fa3cb',
-                    stakingProxy: '0xe3d85799ea9dc457ce52cac86ef9aee4d093ee13',
-                    erc20BridgeSampler: '0x0000000000000000000000000000000000000000',
-                    chaiBridge: '0x0000000000000000000000000000000000000000',
-                    dydxBridge: '0x0000000000000000000000000000000000000000',
-                    godsUnchainedValidator: '0x0000000000000000000000000000000000000000',
-                    broker: '0x0000000000000000000000000000000000000000',
-                    chainlinkStopLimit: '0x0000000000000000000000000000000000000000',
-                    maximumGasPrice: '0x0000000000000000000000000000000000000000',
-                    dexForwarderBridge: '0x0000000000000000000000000000000000000000',
-                    exchangeProxyGovernor: '0x0000000000000000000000000000000000000000',
-                    exchangeProxy: '0xd1793a457656151a1f0f4df41319122f54c4073f',
-                    exchangeProxyTransformerDeployer: '0x5409ed021d9299bf6814279a6a1411a7e866a631',
-                    exchangeProxyFlashWallet: '0xa70624240c52dae00d45d18a5093523067d06e9d',
-                    exchangeProxyLiquidityProviderSandbox: '0x0000000000000000000000000000000000000000',
-                    transformers: {
-                      wethTransformer: '0x44ab9ee86ef2c1990946039fabfe619fd0b81f36',
-                      payTakerTransformer: '0x2d1702bc51508b0163e83ec25cd9b1723dca3fef',
-                      fillQuoteTransformer: '0x538281ccf8ad9266e6e3f6c6077e122b1f56dbd6',
-                      affiliateFeeTransformer: '0x55cc97883d3283ee7abe2249e9a60c86cd292acf',
-                      positiveSlippageFeeTransformer: '0x6bbc3a1f58f693450227789adf08b708367fb6ea'
-                    }
-                  }),
-            networkId: NETWORK_CONFIGS.networkId,
-            chainId: NETWORK_CONFIGS.chainId
-        };
+        contractAddresses: (contractAddress != undefined ? contractAddress :
+            {
+                erc20Proxy: '0x74687ec6c6b22476fdc567af44d79215fe8feffe',
+                erc721Proxy: '0x86b5f7c9c9e73cce74809759706126f0f4592a33',
+                erc1155Proxy: '0x24f72d131daa9c58410c34cf9ce16a90caab0423',
+                zrxToken: '0xe0a45e74a5971456c837b96c649f98f122921fe8',
+                etherToken: '0xaaa4370721620c2bba904c12b835c7cd96a7d774',
+                exchange: '0x0ef2cec45b1780aa96f38868770b9ea84f752eff',
+                assetProxyOwner: '0x0000000000000000000000000000000000000000',
+                erc20BridgeProxy: '0x145c4c8e8e353b57a4768ba8d29613f096084243',
+                zeroExGovernor: '0x0000000000000000000000000000000000000000',
+                forwarder: '0x85ad200071447e00a6f91e03b74091b29ae04125',
+                coordinatorRegistry: '0xd081ec30b1fba053d2cc1a619ef2d49f06d9b1db',
+                coordinator: '0xa231a240e19b1f41c7d450837405c61adb757eee',
+                multiAssetProxy: '0x3b4ba3bb21e4a2842a59e6363b2f1fc23c849e19',
+                staticCallProxy: '0x212e06ce1cfc475a65babb39514d0612114de766',
+                devUtils: '0x04a8e795d1a99700d44309d50fda8615cf8fd3ab',
+                exchangeV2: '0x0000000000000000000000000000000000000000',
+                zrxVault: '0x0bb2851cba74101d70333810c8a4ed4f6a6267ef',
+                staking: '0xf0f2bb45274bd633e284aa81cf0da602cbbf3ceb',
+                stakingProxy: '0x4a168fa4504fadad8aa0f25d652f471267294d78',
+                erc20BridgeSampler: '0x0000000000000000000000000000000000000000',
+                chaiBridge: '0x0000000000000000000000000000000000000000',
+                dydxBridge: '0x0000000000000000000000000000000000000000',
+                godsUnchainedValidator: '0x0000000000000000000000000000000000000000',
+                broker: '0x0000000000000000000000000000000000000000',
+                chainlinkStopLimit: '0x0000000000000000000000000000000000000000',
+                maximumGasPrice: '0x0000000000000000000000000000000000000000',
+                dexForwarderBridge: '0x0000000000000000000000000000000000000000',
+                exchangeProxyGovernor: '0x0000000000000000000000000000000000000000',
+                exchangeProxy: '0x39086633d62dd6369ed1e0a4083cb0d711e5ff7b',
+                exchangeProxyTransformerDeployer: '0x753D9799e55852a9b86143E710EdE5510259fDb3',
+                exchangeProxyFlashWallet: '0xce345d756a771a2746ed0ace61b272504856f375',
+                exchangeProxyLiquidityProviderSandbox: '0x0000000000000000000000000000000000000000',
+                transformers: {
+                  wethTransformer: '0x04724a2d5b443647271bbf8268ba4869ccef95cc',
+                  payTakerTransformer: '0xffd34f875d61ede0f20728a4bd2c26cc88fb35a8',
+                  fillQuoteTransformer: '0x068d5ada3c94c5821219415043afb3cd589f8f65',
+                  affiliateFeeTransformer: '0xc73ad96c730ece17c6e35a538ef3d8325394527d',
+                  positiveSlippageFeeTransformer: '0xf2b002c5748392a1bd8a1c2c73ab2136026c4a22'
+                }
+              }
+              ),
+        networkId: NETWORK_CONFIGS.networkId,
+        chainId: NETWORK_CONFIGS.chainId
+    };
 
     const contractWrappers = new ContractWrappers(providerEngine,  contractConfig);
     console.log (contractWrappers.contractAddresses)
@@ -159,6 +160,7 @@ export async function scenarioAsync(): Promise<void> {
 
     // Generate the order hash and sign it
     const signedOrder = await signatureUtils.ecSignOrderAsync(providerEngine, order, maker);
+    console.log (signedOrder)
     const { orderHash } = await contractWrappers.exchange.getOrderInfo(signedOrder).callAsync();
     // Fill the Order via 0x.js Exchange contract
     txHash = await contractWrappers.exchange
