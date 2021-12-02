@@ -134,6 +134,27 @@ app.get('/v3/orderbook', (req, res) => {
         res.status(HTTP_OK_STATUS).send(orderbookResponse);
     }
 });
+app.get('/v3/orders', (req, res) => {
+    console.log('HTTP: GET orders');
+    const chainIdRaw = req.query.chainId != undefined? req.query.chainId.toString() : "";
+    // tslint:disable-next-line:custom-no-magic-numbers
+    const chainId = parseInt(chainIdRaw, 10);
+    if (chainId !== NETWORK_CONFIGS.chainId) {
+        console.log(`Incorrect Chain ID: ${chainId}`);
+        res.status(HTTP_BAD_REQUEST_STATUS).send({});
+    } else {
+        const bidApiOrders: APIOrder[] = orders.map(order => {
+            return { metaData: {}, order };
+        });
+        let orderbookResponse = {
+            records: bidApiOrders,
+            page: 1,
+            perPage: 100,
+            total: bidApiOrders.length,
+        };
+        res.status(HTTP_OK_STATUS).send(orderbookResponse);
+    }
+});
 /**
  * POST Order config endpoint retrives the values for order fields that the relayer requires.
  * http://sra-spec.s3-website-us-east-1.amazonaws.com/#operation/getOrderConfig
