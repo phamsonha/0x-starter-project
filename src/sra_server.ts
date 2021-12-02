@@ -170,11 +170,13 @@ app.post('/v3/order', (req, res) => {
         res.status(HTTP_BAD_REQUEST_STATUS).send({});
     } else {
         const signedOrder = parseHTTPOrder(req.body);
+        console.log (signedOrder)
         contractWrappers.devUtils
             .getOrderRelevantState(signedOrder, signedOrder.signature)
             .callAsync()
             .then(orderRelevantState => {
                 const [{ orderStatus, orderHash }, remainingFillableAmount, isValidSignature] = orderRelevantState;
+                console.log (`orderStatus: ${orderStatus} remainingFillableAmount: ${remainingFillableAmount.toString()} isValid: ${isValidSignature}`)
                 if (
                     orderStatus === OrderStatus.Fillable &&
                     remainingFillableAmount.isGreaterThan(0) &&
