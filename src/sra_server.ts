@@ -168,6 +168,8 @@ app.post('/v3/order_config', (req, res) => {
         console.log(`Incorrect Chain ID: ${chainId}`);
         res.status(HTTP_BAD_REQUEST_STATUS).send({});
     } else {
+        
+        //takerFee: '1000',
         const orderConfigResponse = {
             senderAddress: NULL_ADDRESS,
             feeRecipientAddress: NULL_ADDRESS,
