@@ -36,5 +36,6 @@ export const calculateProtocolFee = (
     orders: SignedOrder[],
     gasPrice: BigNumber | number = TX_DEFAULTS.gasPrice,
 ): BigNumber => {
-    return new BigNumber(200000).times(gasPrice).times(orders.length);
+    // return new BigNumber(200000).times(gasPrice).times(orders.length);
+    return new BigNumber(100000).times(gasPrice).times(orders.length);
 };

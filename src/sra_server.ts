@@ -172,7 +172,7 @@ app.post('/v3/order_config', (req, res) => {
             senderAddress: NULL_ADDRESS,
             feeRecipientAddress: NULL_ADDRESS,
             makerFee: ZERO,
-            takerFee: '1000',
+            takerFee: ZERO,
         };
         res.status(HTTP_OK_STATUS).send(orderConfigResponse);
     }

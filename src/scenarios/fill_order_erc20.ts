@@ -87,9 +87,9 @@ export async function scenarioAsync(): Promise<void> {
     printUtils.printAccounts();
 
     // the amount the maker is selling of maker asset
-    const makerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(5), DECIMALS);
+    const makerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(1), DECIMALS);
     // the amount the maker wants of taker asset
-    const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.1), DECIMALS);
+    const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.01), DECIMALS);
     // 0x v2 uses hex encoded asset data strings to encode all the information needed to identify an asset
     console.log (`encodeERC20AssetData: zrxTokenAddress: ${zrxTokenAddress} etherTokenAddress: ${etherTokenAddress} contractWrappers.devUtils: ${contractWrappers.devUtils.address}`)
     const makerAssetData = await contractWrappers.devUtils.encodeERC20AssetData(zrxTokenAddress).callAsync();
@@ -167,6 +167,11 @@ export async function scenarioAsync(): Promise<void> {
     if (orderStatus === OrderStatus.Fillable && remainingFillableAmount.isGreaterThan(0) && isValidSignature) {
         // Order is fillable
     }
+
+    console.log ("Check 0x Exchange contract protocolFeeCollector, protocolFeeMultiplier")
+    const protocolFeeCollector = await contractWrappers.exchange.protocolFeeCollector().callAsync();
+    const protocolFeeMultiplier = await contractWrappers.exchange.protocolFeeMultiplier().callAsync();
+    console.log (`protocolFeeCollector: ${protocolFeeCollector}\nprotocolFeeMultiplier: ${protocolFeeMultiplier}`)
 
     console.log ("Fill the Order via 0x Exchange contract")
     // Fill the Order via 0x Exchange contract

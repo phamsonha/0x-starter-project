@@ -1,7 +1,7 @@
 import { GANACHE_NETWORK_ID, KOVAN_NETWORK_ID, RINKEBY_NETWORK_ID, ROPSTEN_NETWORK_ID, BSCTESTNET_NETWORK_ID } from './constants';
 import { NetworkSpecificConfigs } from './types';
 
-export const TX_DEFAULTS = { gas: 1000000, gasPrice: 10000000000 };
+export const TX_DEFAULTS = { gas: 7000000, gasPrice: 2000000000 };
 export const MNEMONIC = 'concert load couple harbor equip island argue ramp clarify fence smart topic';
 export const BASE_DERIVATION_PATH = `44'/60'/0'/0`;
 export const GANACHE_CONFIGS: NetworkSpecificConfigs = {
@@ -29,4 +29,4 @@ export const BSCTESTNET_CONFIGS: NetworkSpecificConfigs = {
     networkId: BSCTESTNET_NETWORK_ID,
     chainId: BSCTESTNET_NETWORK_ID,
 };
-export const NETWORK_CONFIGS = BSCTESTNET_CONFIGS; // or KOVAN_CONFIGS or ROPSTEN_CONFIGS or RINKEBY_CONFIGS
+export const NETWORK_CONFIGS = GANACHE_CONFIGS; // or KOVAN_CONFIGS or ROPSTEN_CONFIGS or RINKEBY_CONFIGS

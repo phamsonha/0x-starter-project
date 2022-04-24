@@ -1,6 +1,7 @@
-import { ContractWrappers, ERC721TokenContract } from '@0x/contract-wrappers';
+import { ContractWrappers, ERC20TokenContract, ERC721TokenContract } from '@0x/contract-wrappers';
+import { artifacts as erc20Artifacts, DummyERC20TokenContract, WETH9Contract } from '@0x/contracts-erc20';
 import { assetDataUtils, generatePseudoRandomSalt, Order, signatureUtils } from '@0x/order-utils';
-import { BigNumber } from '@0x/utils';
+import { BigNumber, RevertError } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
 
 import { NETWORK_CONFIGS, TX_DEFAULTS } from '../configs';
@@ -17,7 +18,7 @@ import { calculateProtocolFee, getRandomFutureDateInSeconds, runMigrationsOnceIf
 export async function scenarioAsync(): Promise<void> {
     PrintUtils.printScenario('Fill Order ERC721');
     let contractAddress = undefined
-    // contractAddress = await runMigrationsOnceIfRequiredAsync();
+    contractAddress = await runMigrationsOnceIfRequiredAsync();
     // Initialize the ContractWrappers, this provides helper functions around calling
     // 0x contracts as well as ERC20/ERC721 token contracts on the blockchain
     let contractConfig = {
@@ -76,23 +77,27 @@ export async function scenarioAsync(): Promise<void> {
         console.log('No Dummy ERC721 Tokens deployed on this network');
         return;
     }
+    //DummyERC20Token successfully deployed at 0xddb2b738682ad218ed87cf6f3a466798644e5d8d
+    const dummyErc20Token = "0x8dea1defba19408ccad2b0a95e6e3b7959c3d197" //DAI
+
     // Initialize the Web3Wrapper, this provides helper functions around fetching
     // account information, balances, general contract logs
     const web3Wrapper = new Web3Wrapper(providerEngine);
     const [maker, taker] = await web3Wrapper.getAvailableAddressesAsync();
 
-    const printUtils = new PrintUtils(web3Wrapper, contractWrappers, { maker, taker }, { WETH: etherTokenAddress });
+    const printUtils = new PrintUtils(web3Wrapper, contractWrappers, { maker, taker }, { WETH: etherTokenAddress, ERC20: dummyErc20Token });
     printUtils.printAccounts();
 
     // the amount the maker is selling of maker asset (1 ERC721 Token)
     const makerAssetAmount = new BigNumber(1);
     // the amount the maker wants of taker asset
-    const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.01), DECIMALS);
+    const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(0.0000001), DECIMALS);
     // Generate a random token id
     const tokenId = generatePseudoRandomSalt();
     // 0x v2 uses hex encoded asset data strings to encode all the information needed to identify an asset
     const makerAssetData = assetDataUtils.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
-    const takerAssetData = await contractWrappers.devUtils.encodeERC20AssetData(etherTokenAddress).callAsync();
+    // const takerAssetData = assetDataUtils.encodeERC20AssetData(etherTokenAddress);
+    const takerAssetData = await contractWrappers.devUtils.encodeERC20AssetData(dummyErc20Token).callAsync();
     let txHash;
 
     // Mint a new ERC721 token for the maker
@@ -113,18 +118,32 @@ export async function scenarioAsync(): Promise<void> {
         .sendTransactionAsync({ from: taker });
     await printUtils.awaitTransactionMinedSpinnerAsync('Taker WETH Approval', takerWETHApprovalTxHash);
 
+
+    // Allow the 0x ERC20 Proxy to move dummyErc20Token on behalf of takerAccount
+    console.log ("Approve for dummyerc20, erc20Proxy: ", contractWrappers.contractAddresses.erc20Proxy)
+    const erc20Token = new DummyERC20TokenContract(dummyErc20Token, providerEngine);
+    //transfer erc20Token to taker to buy
+    const takerERC20TransferTxHash = await erc20Token.transfer (taker, takerAssetAmount).sendTransactionAsync({ from: maker });
+    await printUtils.awaitTransactionMinedSpinnerAsync('Maker transfer ERC20 to Taker', takerERC20TransferTxHash);
+
+    const takerERC20ApprovalTxHash = await erc20Token
+        .approve(contractWrappers.contractAddresses.erc20Proxy, UNLIMITED_ALLOWANCE_IN_BASE_UNITS)
+        .sendTransactionAsync({ from: taker });
+    await printUtils.awaitTransactionMinedSpinnerAsync('Taker ERC20 Approval', takerERC20ApprovalTxHash);
+
     // Convert ETH into WETH for taker by depositing ETH into the WETH contract
-    const takerWETHDepositTxHash = await etherToken.deposit().sendTransactionAsync({
-        from: taker,
-        value: takerAssetAmount,
-    });
-    await printUtils.awaitTransactionMinedSpinnerAsync('Taker WETH Deposit', takerWETHDepositTxHash);
+    // const takerWETHDepositTxHash = await etherToken.deposit().sendTransactionAsync({
+    //     from: taker,
+    //     value: takerAssetAmount,
+    // });
+    // await printUtils.awaitTransactionMinedSpinnerAsync('Taker WETH Deposit', takerWETHDepositTxHash);
 
     PrintUtils.printData('Setup', [
         ['Mint ERC721', mintTxHash],
         ['Maker ERC721 Approval', makerERC721ApprovalTxHash],
         ['Taker WETH Approval', takerWETHApprovalTxHash],
-        ['Taker WETH Deposit', takerWETHDepositTxHash],
+        ['Taker ERC20 Approval', takerERC20ApprovalTxHash],
+        // ['Taker WETH Deposit', takerWETHDepositTxHash],
     ]);
 
     // Set up the Order and fill it
@@ -136,8 +155,8 @@ export async function scenarioAsync(): Promise<void> {
         chainId: NETWORK_CONFIGS.chainId,
         exchangeAddress,
         makerAddress: maker,
-        takerAddress: NULL_ADDRESS,
-        senderAddress: NULL_ADDRESS,
+        takerAddress: taker,
+        senderAddress: taker,
         feeRecipientAddress: NULL_ADDRESS,
         expirationTimeSeconds: randomExpiration,
         salt: generatePseudoRandomSalt(),
@@ -161,13 +180,33 @@ export async function scenarioAsync(): Promise<void> {
     // Generate the order hash and sign it
     const signedOrder = await signatureUtils.ecSignOrderAsync(providerEngine, order, maker);
     console.log (signedOrder)
-    const { orderHash } = await contractWrappers.exchange.getOrderInfo(signedOrder).callAsync();
+    // const { orderHash } = await contractWrappers.exchange.getOrderInfo(signedOrder).callAsync();
+
+    // Validate this order
+    var orderHashString
+    const [
+        { orderStatus, orderHash },
+        remainingFillableAmount,
+        isValidSignature,
+    ] = await contractWrappers.devUtils.getOrderRelevantState(signedOrder, signedOrder.signature).callAsync();
+    orderHashString = orderHash
+    console.log (`orderHash: ${orderHash} orderStatus: ${orderStatus} remainingFillableAmount: ${remainingFillableAmount.toString()} isValid: ${isValidSignature}`)
+
     // Fill the Order via 0x.js Exchange contract
-    txHash = await contractWrappers.exchange
+    try {
+        txHash = await contractWrappers.exchange
         .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)
         .sendTransactionAsync({ from: taker, ...TX_DEFAULTS, value: calculateProtocolFee([signedOrder]) });
-    const txReceipt = await printUtils.awaitTransactionMinedSpinnerAsync('fillOrder', txHash);
-    printUtils.printTransaction('fillOrder', txReceipt, [['orderHash', orderHash]]);
+        const txReceipt = await printUtils.awaitTransactionMinedSpinnerAsync('fillOrder', txHash);
+        printUtils.printTransaction('fillOrder', txReceipt, [['orderHash', orderHash]]);
+
+    } catch (e) {
+        console.log ("error -> ", e)
+        let data0 = Object.assign({return:""},Object.values(e.data)[0])
+        var rError = RevertError.decode(data0.return)
+        console.log ("RevertError", rError)
+    }
+
 
     // Print the Balances
     await printUtils.fetchAndPrintContractBalancesAsync();
