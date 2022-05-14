@@ -121,7 +121,7 @@ export async function scenarioAsync(): Promise<void> {
 
     // Allow the 0x ERC20 Proxy to move dummyErc20Token on behalf of takerAccount
     console.log ("Approve for dummyerc20, erc20Proxy: ", contractWrappers.contractAddresses.erc20Proxy)
-    const erc20Token = new DummyERC20TokenContract(dummyErc20Token, providerEngine);
+    const erc20Token = new ERC20TokenContract(dummyErc20Token, providerEngine);
     //transfer erc20Token to taker to buy
     const takerERC20TransferTxHash = await erc20Token.transfer (taker, takerAssetAmount).sendTransactionAsync({ from: maker });
     await printUtils.awaitTransactionMinedSpinnerAsync('Maker transfer ERC20 to Taker', takerERC20TransferTxHash);
